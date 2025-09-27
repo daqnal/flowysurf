@@ -40,8 +40,8 @@
 .react-flow__handle {
   border-radius: 100%;
   background-color: var(--color-neutral-content);
-  width: 6px;
-  height: 6px;
+  width: 9px;
+  height: 9px;
 }
 
 .react-flow__edge-path {

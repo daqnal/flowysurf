@@ -7,7 +7,7 @@ export default function StartNode() {
   return (
     <>
       <motion.div
-        className="node-inner"
+        className="node-inner p-2"
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: "spring", stiffness: 300, damping: 20 }}

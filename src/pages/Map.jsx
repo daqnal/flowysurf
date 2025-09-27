@@ -20,8 +20,6 @@ import MinorButton from "../components/buttons/MinorButton";
 import { Info, House, Download, Upload } from "lucide-react";
 import NewNodeButton from "../components/buttons/NewNodeButton";
 import { pushToast } from "../components/Toasts";
-import { p } from "motion/react-client";
-import { interpolate } from "motion";
 
 const initialNodes = [
   {
@@ -45,6 +43,7 @@ const initialEdges = [{ id: "n1-n2", source: "n1", target: "n2" }];
 export default function App({ setPageIndex }) {
   const [nodes, setNodes] = useState(initialNodes);
   const [edges, setEdges] = useState(initialEdges);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const autosaveTimer = useRef(null);
 
@@ -135,9 +134,8 @@ export default function App({ setPageIndex }) {
           <MinorButton
             icon={House}
             onBoard={true}
-            pageId={0}
-            setPageIndex={setPageIndex}
             tooltipText={"Home"}
+            onClick={() => setShowConfirm(true)}
           />
           <MinorButton
             icon={Download}
@@ -198,6 +196,29 @@ export default function App({ setPageIndex }) {
           <NewNodeButton nodes={nodes} setNodes={setNodes} />
         </Panel>
       </ReactFlow>
+      {/* Confirmation modal: warn user they'll lose changes when navigating home */}
+      {showConfirm && (
+        <div className="modal modal-open">
+          <div className="modal-box">
+            <h3 className="font-bold text-lg">Leave map?</h3>
+            <p className="py-4">If you go home now you will lose unsaved changes. Continue?</p>
+            <div className="modal-action">
+              <button className="btn" onClick={() => setShowConfirm(false)}>
+                Cancel
+              </button>
+              <button
+                className="btn btn-error"
+                onClick={() => {
+                  setShowConfirm(false);
+                  setPageIndex(0);
+                }}
+              >
+                Leave
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -21,7 +21,6 @@ export default function MilestoneNode() {
           <textarea className="textarea" placeholder="Description"></textarea>
         </div>
 
-
         <motion.div
           aria-hidden
           initial={{ opacity: 0.9 }}

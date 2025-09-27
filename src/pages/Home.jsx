@@ -1,6 +1,5 @@
-import MajorButton from "../components/MajorButton";
-import MinorButton from "../components/MinorButton";
-import TinyButton from "../components/TinyButton";
+import MajorButton from "../components/buttons/MajorButton";
+import TinyButton from "../components/buttons/TinyButton";
 import { CodeXml, Settings } from "lucide-react";
 
 export default function Home({ setPageIndex }) {
@@ -31,18 +30,6 @@ export default function Home({ setPageIndex }) {
               icon={CodeXml}
               address={"https://github.com/daqnal/flowymap"}
             />
-
-            {/* <div className="flex gap-2">
-              <MinorButton
-                title="Settings"
-                setPageIndex={setPageIndex}
-                pageId={2}
-              />
-              <TinyButton
-                icon={CodeXml}
-                address={"https://github.com/daqnal/flowymap"}
-              />
-            </div> */}
           </div>
         </div>
       </div>

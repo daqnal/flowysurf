@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import {
   ReactFlow,
   applyNodeChanges,
@@ -15,10 +15,11 @@ import "./FlowOverrides.css";
 import StartNode from "../components/nodes/StartNode";
 import TaskNode from "../components/nodes/TaskNode";
 import MilestoneNode from "../components/nodes/MilestoneNode";
-import TinyButton from "../components/buttons/TinyButton";
+import MinorButton from "../components/buttons/MinorButton";
 
-import { Info, House, Download } from "lucide-react";
+import { Info, House, Download, Upload } from "lucide-react";
 import NewNodeButton from "../components/buttons/NewNodeButton";
+import { pushToast } from "../components/Toasts";
 
 const initialNodes = [
   {
@@ -42,6 +43,40 @@ const initialEdges = [{ id: "n1-n2", source: "n1", target: "n2" }];
 export default function App({ setPageIndex }) {
   const [nodes, setNodes] = useState(initialNodes);
   const [edges, setEdges] = useState(initialEdges);
+
+  const autosaveTimer = useRef(null);
+
+  // load from localStorage (auto-restore)
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("flowymap-v1");
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed.nodes) setNodes(parsed.nodes);
+        if (parsed.edges) setEdges(parsed.edges);
+      }
+    } catch (err) {
+      console.warn("Failed to parse saved flowymap data", err);
+    }
+  }, []);
+
+  // autosave to localStorage when nodes or edges change (debounced)
+  useEffect(() => {
+    if (autosaveTimer.current) clearTimeout(autosaveTimer.current);
+    autosaveTimer.current = setTimeout(() => {
+      const payload = { nodes, edges, version: "1" };
+      try {
+        localStorage.setItem("flowymap-v1", JSON.stringify(payload));
+        // console.log("autosaved flowmap");
+      } catch (err) {
+        console.warn("Failed to autosave", err);
+      }
+    }, 500);
+
+    return () => {
+      if (autosaveTimer.current) clearTimeout(autosaveTimer.current);
+    };
+  }, [nodes, edges]);
 
   const onNodesChange = useCallback(
     (changes) =>
@@ -73,19 +108,67 @@ export default function App({ setPageIndex }) {
       >
         <Background variant={BackgroundVariant.Dots} />
         <Panel position="bottom-left" className="flex gap-2">
-          <TinyButton
+          <MinorButton
             icon={House}
             onBoard={true}
             pageId={0}
             setPageIndex={setPageIndex}
             tooltipText={"Home"}
           />
-          <TinyButton
+          <MinorButton
             icon={Download}
             onBoard={true}
-            tooltipText={"Save as PDF"}
+            tooltipText={"Download"}
+            onClick={() => {
+                try {
+                  const data = { nodes, edges, version: "1" };
+                  const blob = new Blob([JSON.stringify(data, null, 2)], {
+                    type: "application/json",
+                  });
+                  const ts = new Date().toISOString().replace(/[:.]/g, "-");
+                  const filename = `flowymap-${ts}.flowy`;
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = filename;
+                  document.body.appendChild(a);
+                  a.click();
+                  a.remove();
+                  URL.revokeObjectURL(url);
+                  pushToast(`Exported ${filename}`, "success");
+                } catch (err) {
+                  console.error(err);
+                  pushToast("Failed to export .flowy", "error");
+                }
+            }}
           />
-          <TinyButton icon={Info} onBoard={true} tooltipText={"Help"} />
+            <MinorButton
+              icon={Upload}
+              onBoard={true}
+              tooltipText={"Load"}
+              onClick={() => {
+                const input = document.createElement("input");
+                input.type = "file";
+                input.accept = ".flowy,application/json";
+                input.onchange = async (e) => {
+                  const file = e.target.files && e.target.files[0];
+                  if (!file) return;
+                  try {
+                    const text = await file.text();
+                    const parsed = JSON.parse(text);
+                    if (parsed.nodes) setNodes(parsed.nodes);
+                    if (parsed.edges) setEdges(parsed.edges);
+                    localStorage.setItem("flowymap-v1", JSON.stringify(parsed));
+                    pushToast(`Loaded ${file.name}`, "success");
+                  } catch (err) {
+                    console.error(err);
+                    pushToast("Failed to load .flowy file", "error");
+                  }
+                };
+                input.click();
+              }}
+            />
+          <MinorButton icon={Info} onBoard={true} tooltipText={"Help"} />
         </Panel>
         <Panel position="bottom-right">
           <NewNodeButton nodes={nodes} setNodes={setNodes} />

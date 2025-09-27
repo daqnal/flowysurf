@@ -1,7 +1,7 @@
 import MajorButton from "../components/MajorButton";
 import MinorButton from "../components/MinorButton";
 import TinyButton from "../components/TinyButton";
-import { CodeXml } from "lucide-react";
+import { CodeXml, Settings } from "lucide-react";
 
 export default function Home({ setPageIndex }) {
   return (
@@ -14,13 +14,25 @@ export default function Home({ setPageIndex }) {
           <p className="py-6">
             Project management tool to map your project's flow
           </p>
-          <div className="flex flex-col gap-2 w-full px-12">
+          <div className="flex gap-2 w-full">
             <MajorButton
               title={"Create new map"}
               setPageIndex={setPageIndex}
               pageId={1}
             />
-            <div className="flex gap-2">
+
+            <TinyButton
+              icon={Settings}
+              pageId={2}
+              setPageIndex={setPageIndex}
+            />
+
+            <TinyButton
+              icon={CodeXml}
+              address={"https://github.com/daqnal/flowymap"}
+            />
+
+            {/* <div className="flex gap-2">
               <MinorButton
                 title="Settings"
                 setPageIndex={setPageIndex}
@@ -30,7 +42,7 @@ export default function Home({ setPageIndex }) {
                 icon={CodeXml}
                 address={"https://github.com/daqnal/flowymap"}
               />
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

@@ -20,6 +20,8 @@ import MinorButton from "../components/buttons/MinorButton";
 import { Info, House, Download, Upload } from "lucide-react";
 import NewNodeButton from "../components/buttons/NewNodeButton";
 import { pushToast } from "../components/Toasts";
+import { p } from "motion/react-client";
+import { interpolate } from "motion";
 
 const initialNodes = [
   {
@@ -67,7 +69,6 @@ export default function App({ setPageIndex }) {
       const payload = { nodes, edges, version: "1" };
       try {
         localStorage.setItem("flowymap-v1", JSON.stringify(payload));
-        // console.log("autosaved flowmap");
       } catch (err) {
         console.warn("Failed to autosave", err);
       }
@@ -79,9 +80,31 @@ export default function App({ setPageIndex }) {
   }, [nodes, edges]);
 
   const onNodesChange = useCallback(
-    (changes) =>
-      setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot)),
-    []
+    (changes) => {
+      // detect removal changes to animate them
+      const removes = changes.filter((c) => c.type === "remove").map((c) => c.id);
+      if (!removes.length) {
+        // default behaviour
+        setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot));
+        return;
+      }
+
+      // mark nodes as removing to apply CSS animation
+      setNodes((nodesSnapshot) =>
+        nodesSnapshot.map((n) =>
+          removes.includes(n.id) ? { ...n, className: `${n.className || ""} removing` } : n
+        )
+      );
+
+      // after animation duration, actually remove nodes and their connected edges
+      setTimeout(() => {
+        setNodes((nodesSnapshot) => nodesSnapshot.filter((n) => !removes.includes(n.id)));
+        setEdges((edgesSnapshot) =>
+          edgesSnapshot.filter((e) => !removes.includes(e.source) && !removes.includes(e.target))
+        );
+      }, 240);
+    },
+    [setEdges]
   );
   const onEdgesChange = useCallback(
     (changes) =>
@@ -105,6 +128,7 @@ export default function App({ setPageIndex }) {
         proOptions={{ hideAttribution: true }}
         colorMode="dark"
         fitView
+        fitViewOptions={{ padding: 1, maxZoom: 1.5, minZoom: 1 }}
       >
         <Background variant={BackgroundVariant.Dots} />
         <Panel position="bottom-left" className="flex gap-2">
@@ -120,54 +144,54 @@ export default function App({ setPageIndex }) {
             onBoard={true}
             tooltipText={"Download"}
             onClick={() => {
-                try {
-                  const data = { nodes, edges, version: "1" };
-                  const blob = new Blob([JSON.stringify(data, null, 2)], {
-                    type: "application/json",
-                  });
-                  const ts = new Date().toISOString().replace(/[:.]/g, "-");
-                  const filename = `flowymap-${ts}.flowy`;
-                  const url = URL.createObjectURL(blob);
-                  const a = document.createElement("a");
-                  a.href = url;
-                  a.download = filename;
-                  document.body.appendChild(a);
-                  a.click();
-                  a.remove();
-                  URL.revokeObjectURL(url);
-                  pushToast(`Exported ${filename}`, "success");
-                } catch (err) {
-                  console.error(err);
-                  pushToast("Failed to export .flowy", "error");
-                }
+              try {
+                const data = { nodes, edges, version: "1" };
+                const blob = new Blob([JSON.stringify(data, null, 2)], {
+                  type: "application/json",
+                });
+                const ts = new Date().toISOString().replace(/[:.]/g, "-");
+                const filename = `flowymap-${ts}.flowy`;
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(url);
+                pushToast(`Exported ${filename}`, "success");
+              } catch (err) {
+                console.error(err);
+                pushToast("Failed to export .flowy", "error");
+              }
             }}
           />
-            <MinorButton
-              icon={Upload}
-              onBoard={true}
-              tooltipText={"Load"}
-              onClick={() => {
-                const input = document.createElement("input");
-                input.type = "file";
-                input.accept = ".flowy,application/json";
-                input.onchange = async (e) => {
-                  const file = e.target.files && e.target.files[0];
-                  if (!file) return;
-                  try {
-                    const text = await file.text();
-                    const parsed = JSON.parse(text);
-                    if (parsed.nodes) setNodes(parsed.nodes);
-                    if (parsed.edges) setEdges(parsed.edges);
-                    localStorage.setItem("flowymap-v1", JSON.stringify(parsed));
-                    pushToast(`Loaded ${file.name}`, "success");
-                  } catch (err) {
-                    console.error(err);
-                    pushToast("Failed to load .flowy file", "error");
-                  }
-                };
-                input.click();
-              }}
-            />
+          <MinorButton
+            icon={Upload}
+            onBoard={true}
+            tooltipText={"Load"}
+            onClick={() => {
+              const input = document.createElement("input");
+              input.type = "file";
+              input.accept = ".flowy,application/json";
+              input.onchange = async (e) => {
+                const file = e.target.files && e.target.files[0];
+                if (!file) return;
+                try {
+                  const text = await file.text();
+                  const parsed = JSON.parse(text);
+                  if (parsed.nodes) setNodes(parsed.nodes);
+                  if (parsed.edges) setEdges(parsed.edges);
+                  localStorage.setItem("flowymap-v1", JSON.stringify(parsed));
+                  pushToast(`Loaded ${file.name}`, "success");
+                } catch (err) {
+                  console.error(err);
+                  pushToast("Failed to load .flowy file", "error");
+                }
+              };
+              input.click();
+            }}
+          />
           <MinorButton icon={Info} onBoard={true} tooltipText={"Help"} />
         </Panel>
         <Panel position="bottom-right">

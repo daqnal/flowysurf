@@ -28,6 +28,13 @@ export default function Home({ setPageIndex }) {
     input.click();
   }
 
+  function createNewMap() {
+    // clear any existing map in localStorage
+    localStorage.removeItem("flowymap-v1");
+    // navigate to Map
+    setPageIndex(1);
+  }
+
   return (
     <div className="hero bg-base-200 min-h-screen">
       <div className="hero-content text-center">
@@ -40,28 +47,29 @@ export default function Home({ setPageIndex }) {
           </p>
           <div className="flex flex-col gap-2 w-full">
             <MajorButton
-                title={"Create new map"}
-                setPageIndex={setPageIndex}
-                pageId={1}
-              />
+              title={"Create new map"}
+              onClick={() => createNewMap()}
+            />
 
             <div className="flex gap-2">
 
               <MajorButton title={"Open map from file"} onClick={openFlowFileAndLoad} />
 
-              <MinorButton
-                icon={Settings}
-                pageId={2}
-                setPageIndex={setPageIndex}
-              />
+              <div className="tooltip tooltip-bottom" data-tip="Settings">
+                <MinorButton
+                  icon={Settings}
+                  pageId={2}
+                  setPageIndex={setPageIndex}
+                />
+              </div>
 
-              <MinorButton
-                icon={CodeXml}
-                address={"https://github.com/daqnal/flowymap"}
-              />
+              <div className="tooltip tooltip-bottom" data-tip="Source code ↗">
+                <MinorButton
+                  icon={CodeXml}
+                  address={"https://github.com/daqnal/flowymap"}
+                />
+              </div>
             </div>
-
-
           </div>
         </div>
       </div>

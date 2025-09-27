@@ -12,7 +12,6 @@ export default function NewNodeButton({ nodes, setNodes }) {
         type: type,
       },
     ]);
-    console.log(nodes);
   }
 
   return (

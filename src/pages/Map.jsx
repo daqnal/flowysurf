@@ -13,8 +13,12 @@ import "@xyflow/react/dist/base.css";
 import "./FlowOverrides.css";
 
 import StartNode from "../components/nodes/StartNode";
+import TaskNode from "../components/nodes/TaskNode";
+import MilestoneNode from "../components/nodes/MilestoneNode";
+import TinyButton from "../components/buttons/TinyButton";
 
-import HelpButton from "../components/buttons/HelpButton";
+import { Info, House, Download } from "lucide-react";
+import NewNodeButton from "../components/buttons/NewNodeButton";
 
 const initialNodes = [
   {
@@ -25,14 +29,17 @@ const initialNodes = [
     deletable: false,
     focusable: false,
   },
-  { id: "n2", position: { x: 100, y: 0 }, data: { label: "random" } },
 ];
 
-const nodeTypes = { startNode: StartNode };
+const nodeTypes = {
+  startNode: StartNode,
+  taskNode: TaskNode,
+  milestoneNode: MilestoneNode,
+};
 
 const initialEdges = [{ id: "n1-n2", source: "n1", target: "n2" }];
 
-export default function App() {
+export default function App({ setPageIndex }) {
   const [nodes, setNodes] = useState(initialNodes);
   const [edges, setEdges] = useState(initialEdges);
 
@@ -65,8 +72,23 @@ export default function App() {
         fitView
       >
         <Background variant={BackgroundVariant.Dots} />
+        <Panel position="bottom-left" className="flex gap-2">
+          <TinyButton
+            icon={House}
+            onBoard={true}
+            pageId={0}
+            setPageIndex={setPageIndex}
+            tooltipText={"Home"}
+          />
+          <TinyButton
+            icon={Download}
+            onBoard={true}
+            tooltipText={"Save as PDF"}
+          />
+          <TinyButton icon={Info} onBoard={true} tooltipText={"Help"} />
+        </Panel>
         <Panel position="bottom-right">
-          <HelpButton />
+          <NewNodeButton nodes={nodes} setNodes={setNodes} />
         </Panel>
       </ReactFlow>
     </div>

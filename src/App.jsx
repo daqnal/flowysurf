@@ -8,7 +8,7 @@ import Settings from "./pages/Settings";
 export default function App() {
   const pages = [Home, Board, Settings];
 
-  const [pageIndex, setPageIndex] = useState(0);
+  const [pageIndex, setPageIndex] = useState(1);
 
   const ActiveComponent = pages[pageIndex];
 

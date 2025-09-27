@@ -5,17 +5,28 @@ export default function TinyButton({
   address,
   pageId,
   setPageIndex,
+  onBoard,
+  tooltipText,
+  component: Component,
 }) {
   return (
-    <motion.button
-      whileHover={{ scale: 1.03 }}
-      whileTap={{ scale: 0.97 }}
-      className="btn btn-primary btn-circle btn-soft"
-      onClick={pageId ? () => setPageIndex(pageId) : null}
-    >
-      <a href={address} target="_blank">
-        <Icon />
-      </a>
-    </motion.button>
+    <div className="tooltip" data-tip={tooltipText}>
+      <motion.button
+        whileHover={{ scale: 1.03 }}
+        whileTap={{ scale: 0.97 }}
+        className={
+          onBoard
+            ? "btn btn-primary btn-circle btn-soft btn-sm"
+            : "btn btn-primary btn-circle btn-soft"
+        }
+        onClick={
+          Number.isInteger(pageId) ? () => setPageIndex(pageId) : <Component />
+        }
+      >
+        <a href={address} target="_blank">
+          <Icon className={onBoard ? "w-5" : ""} />
+        </a>
+      </motion.button>
+    </div>
   );
 }

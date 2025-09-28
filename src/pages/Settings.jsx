@@ -1,7 +1,6 @@
 import { Home } from "lucide-react";
 import { useEffect, useState } from "react";
 import { themeChange } from "theme-change";
-import { X } from "lucide-react";
 
 const DEFAULT_KEYBINDS = {
   delete: ["d", "Delete", "Backspace"],

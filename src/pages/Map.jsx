@@ -18,7 +18,7 @@ import MilestoneNode from "../components/nodes/MilestoneNode";
 import MinorButton from "../components/buttons/MinorButton";
 import { emit as emitFlowEvent } from "../lib/flowEvents";
 
-import { Info, House, Download, Upload, Plus } from "lucide-react";
+import { Info, House, Download, Upload } from "lucide-react";
 import NewNodeButton from "../components/buttons/NewNodeButton";
 import { pushToast } from "../components/Toasts";
 
@@ -135,6 +135,25 @@ export default function App({ setPageIndex }) {
     []
   );
 
+  // prevent map wheel/zoom when user is interacting with inputs/textareas
+  useEffect(() => {
+    const handler = (ev) => {
+      try {
+        // if the event target is inside an input or textarea, stop propagation to avoid map zoom
+        const el = ev.target;
+        if (!el) return;
+        if (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.closest && el.closest("input,textarea")) {
+          ev.stopPropagation();
+        }
+      } catch (e) {
+        // ignore
+      }
+    };
+    // capture phase so we see it before ReactFlow's handlers
+    document.addEventListener("wheel", handler, { passive: false, capture: true });
+    return () => document.removeEventListener("wheel", handler, { capture: true });
+  }, []);
+
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
       <ReactFlow
@@ -150,22 +169,7 @@ export default function App({ setPageIndex }) {
         fitView
         fitViewOptions={{ padding: 1, maxZoom: 1.5, minZoom: 0.2 }}
       >
-        {/* Stop ReactFlow wheel/drag when interacting with inputs inside nodes */}
-        <div
-          onFocus={(e) => {
-            const t = e.target;
-            if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA")) {
-              // prevent parent handlers from intercepting scroll/wheel/keys
-              t.addEventListener(
-                "wheel",
-                (ev) => {
-                  ev.stopPropagation();
-                },
-                { passive: false }
-              );
-            }
-          }}
-        />
+        {/* per-document wheel capture listener added in useEffect to prevent map zoom while editing inputs */}
         <Background variant={BackgroundVariant.Dots} />
         <Panel position="bottom-left" className="flex gap-2">
           <MinorButton
@@ -239,7 +243,10 @@ export default function App({ setPageIndex }) {
             {/* Dynamic milestone steps: each Milestone node becomes an li */}
             <ul className="steps steps-vertical sm:steps-horizontal scale-75">
               {(() => {
-                // compute adjacency maps
+                if (!nodes || !nodes.length) return null;
+                // build quick lookup map
+                const nodesById = new Map(nodes.map((n) => [n.id, n]));
+                // build adjacency maps
                 const incoming = new Map();
                 const outgoing = new Map();
                 for (const e of edges) {
@@ -262,7 +269,7 @@ export default function App({ setPageIndex }) {
                     const neighbors = new Set([...(incoming.get(nodeId) || []), ...(outgoing.get(nodeId) || [])]);
                     for (const nbrId of neighbors) {
                       if (visited.has(nbrId)) continue;
-                      const nbrNode = nodes.find((n) => n.id === nbrId);
+                      const nbrNode = nodesById.get(nbrId);
                       if (!nbrNode) continue;
                       if (nbrNode.type === "taskNode") taskNodeIds.add(nbrNode.id);
                       if (nbrNode.type !== "startNode" && nbrNode.type !== "milestoneNode") {
@@ -279,7 +286,7 @@ export default function App({ setPageIndex }) {
                   const upstream = getUpstreamTaskNodeIds(mNode.id);
                   const total = upstream.length;
                   const completed = upstream.reduce((acc, nid) => {
-                    const node = nodes.find((n) => n.id === nid);
+                    const node = nodesById.get(nid);
                     return acc + (node && node.data && node.data.done ? 1 : 0);
                   }, 0);
                   const isComplete = total > 0 && completed === total;

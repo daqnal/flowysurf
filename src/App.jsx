@@ -10,7 +10,7 @@ import Toasts from "./components/Toasts";
 export default function App() {
   const pages = [Home, Board, Settings];
 
-  const [pageIndex, setPageIndex] = useState(2);
+  const [pageIndex, setPageIndex] = useState(0);
 
   const ActiveComponent = pages[pageIndex];
 

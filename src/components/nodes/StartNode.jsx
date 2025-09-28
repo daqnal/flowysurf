@@ -13,7 +13,7 @@ export default function StartNode() {
         transition={{ type: "spring", stiffness: 300, damping: 20 }}
         style={{ zIndex: 1 }}
       >
-        <b>Start</b>
+        <b className="text-xl">Start</b>
         {/* flash overlay */}
         <motion.div
           aria-hidden

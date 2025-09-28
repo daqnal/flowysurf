@@ -40,12 +40,12 @@ export default function Home({ setPageIndex }) {
       <div className="hero-content text-center">
         <div className="max-w-md">
           <h1 className="text-5xl font-bold">
-            <i>flowymap</i>
+            <i>flowysurf</i>
           </h1>
           <p className="py-6">
             Project management tool to map your project's flow
           </p>
-          <div className="flex flex-col gap-2 w-full">
+          <div className="flex flex-col gap-2 w-full px-8">
             <MajorButton
               title={"Create new map"}
               onClick={() => createNewMap()}

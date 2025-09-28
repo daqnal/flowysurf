@@ -16,6 +16,7 @@ import StartNode from "../components/nodes/StartNode";
 import TaskNode from "../components/nodes/TaskNode";
 import MilestoneNode from "../components/nodes/MilestoneNode";
 import MinorButton from "../components/buttons/MinorButton";
+import { emit as emitFlowEvent } from "../lib/flowEvents";
 
 import { Info, House, Download, Upload } from "lucide-react";
 import NewNodeButton from "../components/buttons/NewNodeButton";
@@ -38,7 +39,7 @@ const nodeTypes = {
   milestoneNode: MilestoneNode,
 };
 
-const initialEdges = [{ id: "n1-n2", source: "n1", target: "n2" }];
+const initialEdges = [];
 
 export default function App({ setPageIndex }) {
   const [nodes, setNodes] = useState(initialNodes);
@@ -76,6 +77,15 @@ export default function App({ setPageIndex }) {
     return () => {
       if (autosaveTimer.current) clearTimeout(autosaveTimer.current);
     };
+  }, [nodes, edges]);
+
+  // notify other listeners about node/edge updates so node components can react
+  useEffect(() => {
+    try {
+      emitFlowEvent({ nodes, edges });
+    } catch (e) {
+      // ignore
+    }
   }, [nodes, edges]);
 
   const onNodesChange = useCallback(

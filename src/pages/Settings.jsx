@@ -1,29 +1,5 @@
+import { Home } from "lucide-react";
 import { useEffect, useState } from "react";
-
-const DAISY_THEMES = [
-  "night",
-  "emerald",
-  "light",
-  "dark",
-  "cupcake",
-  "bumblebee",
-  "corporate",
-  "synthwave",
-  "retro",
-  "cyberpunk",
-  "valentine",
-  "halloween",
-  "garden",
-  "forest",
-  "aqua",
-  "lofi",
-  "pastel",
-  "fantasy",
-  "wireframe",
-  "black",
-  "luxury",
-  "dracula",
-];
 
 const DEFAULT_KEYBINDS = {
   delete: ["d", "Delete", "Backspace"],
@@ -105,33 +81,48 @@ export default function Settings({ setPageIndex }) {
   return (
     <ul className="list bg-base-300 rounded-box shadow-md m-12">
       <li className="list-row flex w-full items-center justify-between">
-        <div className="font-medium">Settings</div>
-        <div>
-          <button className="btn" onClick={goHome}>
-            Home
+        <div className="font-bold text-lg">Settings</div>
+        <div className="tooltip tooltip-left" data-tip="Return Home">
+          <button className="btn btn-soft btn-primary btn-sm btn-circle" onClick={goHome}>
+            <Home className="w-5" />
           </button>
         </div>
       </li>
 
       <li className="list-row flex w-full items-center justify-between">
         <div className="font-medium">Theme</div>
-        <div className="dropdown">
-          <label tabIndex={0} className="btn m-1">
-            {theme}
-          </label>
-          <ul
-            tabIndex={0}
-            className="dropdown-content bg-base-200 rounded-box z-10 w-52 p-2 shadow-lg">
-            {DAISY_THEMES.map((t) => (
-              <li key={t}>
-                <button
-                  className="w-full text-left btn btn-ghost btn-sm"
-                  onClick={() => setTheme(t)}>
-                  {t}
-                </button>
-              </li>
-            ))}
-          </ul>
+        <div className="join">
+          <input
+            type="radio"
+            name="theme-buttons"
+            className="btn theme-controller join-item"
+            aria-label="Default"
+            value="default"
+            defaultChecked />
+          <input
+            type="radio"
+            name="theme-buttons"
+            className="btn theme-controller join-item"
+            aria-label="Emerald"
+            value="emerald" />
+          <input
+            type="radio"
+            name="theme-buttons"
+            className="btn theme-controller join-item"
+            aria-label="Night"
+            value="night" />
+          <input
+            type="radio"
+            name="theme-buttons"
+            className="btn theme-controller join-item"
+            aria-label="Nord"
+            value="nord" />
+          <input
+            type="radio"
+            name="theme-buttons"
+            className="btn theme-controller join-item"
+            aria-label="Dracula"
+            value="dracula" />
         </div>
       </li>
 

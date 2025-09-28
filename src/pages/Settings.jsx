@@ -1,5 +1,7 @@
 import { Home } from "lucide-react";
 import { useEffect, useState } from "react";
+import { themeChange } from "theme-change";
+import { X } from "lucide-react";
 
 const DEFAULT_KEYBINDS = {
   delete: ["d", "Delete", "Backspace"],
@@ -7,20 +9,15 @@ const DEFAULT_KEYBINDS = {
   milestone: ["w"],
 };
 
+const KEYBIND_NAMES = {
+  delete: "Delete Node",
+  task: "Create Task Node",
+  milestone: "Create Milestone Node",
+};
+
 export default function Settings({ setPageIndex }) {
-  const [theme, setTheme] = useState(() => {
-    try {
-      const stored = localStorage.getItem("flowymap-theme");
-      if (stored) return stored;
-      const prefersDark =
-        typeof window !== "undefined" &&
-        window.matchMedia &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches;
-      return prefersDark ? "night" : "emerald";
-    } catch (e) {
-      return "emerald";
-    }
-  });
+
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
   const [keybinds, setKeybinds] = useState(() => {
     try {
@@ -32,13 +29,8 @@ export default function Settings({ setPageIndex }) {
   });
 
   useEffect(() => {
-    try {
-      localStorage.setItem("flowymap-theme", theme);
-      document.documentElement.setAttribute("data-theme", theme);
-    } catch (e) {
-      // ignore
-    }
-  }, [theme]);
+    themeChange(false);
+  }, []);
 
   useEffect(() => {
     try {
@@ -98,31 +90,36 @@ export default function Settings({ setPageIndex }) {
             className="btn theme-controller join-item"
             aria-label="Default"
             value="default"
+            data-set-theme={prefersDark ? "night" : "emerald"}
             defaultChecked />
           <input
             type="radio"
             name="theme-buttons"
             className="btn theme-controller join-item"
             aria-label="Emerald"
-            value="emerald" />
+            value="emerald"
+            data-set-theme="emerald" />
           <input
             type="radio"
             name="theme-buttons"
             className="btn theme-controller join-item"
             aria-label="Night"
-            value="night" />
+            value="night"
+            data-set-theme="night" />
           <input
             type="radio"
             name="theme-buttons"
             className="btn theme-controller join-item"
             aria-label="Nord"
-            value="nord" />
+            value="nord"
+            data-set-theme="nord" />
           <input
             type="radio"
             name="theme-buttons"
             className="btn theme-controller join-item"
             aria-label="Dracula"
-            value="dracula" />
+            value="dracula"
+            data-set-theme="dracula" />
         </div>
       </li>
 
@@ -134,19 +131,12 @@ export default function Settings({ setPageIndex }) {
             {Object.entries(keybinds).map(([action, keys]) => (
               <div key={action} className="card bg-base-100 p-3 shadow-sm">
                 <div className="flex items-center justify-between mb-2">
-                  <div className="capitalize">{action}</div>
-                  <div>
-                    <button
-                      className="btn btn-xs btn-outline mr-2"
-                      onClick={() => addKeybind(action)}>
-                      + Add
-                    </button>
-                  </div>
+                  <div className="">{KEYBIND_NAMES[action]}</div>
                 </div>
 
                 <div className="flex flex-col gap-2">
                   {(keys || []).map((k, i) => (
-                    <div key={i} className="flex gap-2">
+                    <div key={i} className="flex gap-2 items-center">
                       <input
                         className="input input-sm w-full"
                         value={k}
@@ -154,12 +144,19 @@ export default function Settings({ setPageIndex }) {
                         aria-label={`${action} key ${i}`}
                       />
                       <button
-                        className="btn btn-sm btn-error"
+                        className="btn btn-xs btn-circle btn-error"
                         onClick={() => removeKeybind(action, i)}>
-                        Remove
+                        <X />
                       </button>
                     </div>
                   ))}
+                </div>
+                <div>
+                  <button
+                    className="btn btn-xs btn-outline mt-2"
+                    onClick={() => addKeybind(action)}>
+                    + Add
+                  </button>
                 </div>
               </div>
             ))}

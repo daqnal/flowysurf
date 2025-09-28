@@ -2,11 +2,8 @@ import MajorButton from "../components/buttons/MajorButton";
 import MinorButton from "../components/buttons/MinorButton";
 import { pushToast } from "../components/Toasts";
 import { CodeXml, Settings } from "lucide-react";
-import { useState } from "react";
 
 export default function Home({ setPageIndex }) {
-
-  const [theme, setTheme] = useState((window.matchMedia('(prefers-color-scheme: dark)').matches) ? "night" : "emerald");
 
   // file input ref-less handler: create input on demand to avoid adding DOM refs
   function openFlowFileAndLoad() {
@@ -42,9 +39,9 @@ export default function Home({ setPageIndex }) {
   return (
     <div className="hero bg-base-200 min-h-screen">
       <div className="hero-content text-center">
-        <div className="max-w-md">
-          <img src={theme === "emerald" || theme === "nord" ? "/logo-light-mode.svg" : "/logo-dark-mode.svg"} alt="flowysurf logo" />
-          <h1 className="text-5xl font-bold">
+        <div className="max-w-md flex flex-col items-center">
+          <img src={window.flowyTheme === "emerald" || window.flowyTheme === "nord" ? "/logo-light-mode.svg" : "/logo-dark-mode.svg"} alt="flowysurf logo" className="w-30 mb-2" />
+          <h1 className="text-4xl font-bold">
             <i>flowysurf</i>
           </h1>
           <p className="py-6">

@@ -1,11 +1,9 @@
 # flowysurf
 
-![flowysurf logo](public/logo-light-mode.svg)
-
 *flowysurf* is a lightweight visual project manager optimized for planning milestones and tasks with a clean UI. Drag nodes, connect task flows, and track milestone progress — milestones automatically aggregate upstream Task completion. Built with speed and UX in mind.
 
-- ![Screenshot 1](./screenshots/placeholder-1.png)
-- ![Screenshot 2](./screenshots/placeholder-2.png)
+<!-- ![Screenshot of Home page](./screenshots/ss1.png) -->
+![Screenshot of example Project](./screenshots/ss2.png)
 
 ---
 

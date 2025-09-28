@@ -137,7 +137,7 @@ export default function App({ setPageIndex }) {
         proOptions={{ hideAttribution: true }}
         colorMode="dark"
         fitView
-        fitViewOptions={{ padding: 1, maxZoom: 1.5, minZoom: 1 }}
+        fitViewOptions={{ padding: 1, maxZoom: 1.5, minZoom: 0.2 }}
       >
         <Background variant={BackgroundVariant.Dots} />
         <Panel position="bottom-left" className="flex gap-2">

@@ -12,11 +12,13 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.1.13",
     "@xyflow/react": "^12.8.6",
+    "js-confetti": "^0.13.1",
     "lucide-react": "^0.544.0",
     "motion": "^12.23.22",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "tailwindcss": "^4.1.13"
+    "tailwindcss": "^4.1.13",
+    "theme-change": "^2.5.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",

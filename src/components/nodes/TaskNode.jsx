@@ -19,6 +19,7 @@ export default function TaskNode(props) {
   const { id, data = {} } = props;
   const rf = useReactFlow();
   const [todos, setTodos] = useState(() => normalizeTodos(data.todos));
+  const [done, setDone] = useState(() => !!data.done);
   const inputsRef = useRef([]);
 
   // sync when node data changes externally
@@ -30,7 +31,16 @@ export default function TaskNode(props) {
     (nextTodos) => {
       setTodos(nextTodos);
       try {
+        // persist only todos; do NOT automatically set top-level done from subtasks
         rf.setNodes((ns) => ns.map((n) => (n.id === id ? { ...n, data: { ...n.data, todos: nextTodos } } : n)));
+        // notify external subscribers about the graph change
+        try {
+          const { emit } = require("../../lib/flowEvents");
+          const payload = { nodes: rf.getNodes ? rf.getNodes() : [], edges: rf.getEdges ? rf.getEdges() : [] };
+          emit(payload);
+        } catch (e) {
+          // ignore require errors outside of bundler
+        }
       } catch (e) {
         // ignore in non-browser/test
       }
@@ -46,6 +56,24 @@ export default function TaskNode(props) {
   const toggleDone = (index) => {
     const next = todos.map((t, i) => (i === index ? { ...t, done: !t.done } : t));
     persist(next);
+  };
+
+  // persist top-level done when main checkbox toggled
+  const toggleMainDone = () => {
+    const nextDone = !done;
+    setDone(nextDone);
+    try {
+      rf.setNodes((ns) => ns.map((n) => (n.id === id ? { ...n, data: { ...n.data, todos, done: nextDone } } : n)));
+      try {
+        const { emit } = require("../../lib/flowEvents");
+        const payload = { nodes: rf.getNodes ? rf.getNodes() : [], edges: rf.getEdges ? rf.getEdges() : [] };
+        emit(payload);
+      } catch (e) {
+        // ignore
+      }
+    } catch (e) {
+      // ignore
+    }
   };
 
   const addSubtask = (atIndex) => {
@@ -86,8 +114,8 @@ export default function TaskNode(props) {
             <input
               type="checkbox"
               className="checkbox checkbox-xl m-auto"
-              // checked={ }
-              // onChange={ }
+              checked={done}
+              onChange={toggleMainDone}
               aria-label={"Toggle task"}
             />
             <input type="text" placeholder="Task title" className="input input-lg input-ghost" />

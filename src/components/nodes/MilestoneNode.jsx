@@ -25,6 +25,7 @@ export default function MilestoneNode(props) {
   const [completedTasks, setCompletedTasks] = useState(0);
   const confettiRef = useMemo(() => ({ js: null }), []);
   const prevCompleteRef = useMemo(() => ({ wasComplete: false }), []);
+  const [title, setTitle] = useState(() => (data && (data.title || data.name || data.label)) || "");
 
   // Helper to recursively find all upstream TaskNodes
   function getUpstreamTaskNodes(startId, nodes, edges) {
@@ -118,6 +119,27 @@ export default function MilestoneNode(props) {
     return () => unsub();
   }, [rf, id]);
 
+  // keep local title in sync if external data changes
+  useEffect(() => {
+    setTitle((data && (data.title || data.name || data.label)) || "");
+  }, [data && data.title, data && data.name, data && data.label]);
+
+  // persist title to the node's data and notify listeners
+  function persistTitle(nextTitle) {
+    setTitle(nextTitle);
+    try {
+      rf.setNodes((ns) => ns.map((n) => (n.id === id ? { ...n, data: { ...n.data, title: nextTitle } } : n)));
+    } catch (e) {
+      // ignore
+    }
+    try {
+      const { emit } = require("../../lib/flowEvents");
+      emit({ nodes: rf.getNodes ? rf.getNodes() : [], edges: rf.getEdges ? rf.getEdges() : [] });
+    } catch (e) {
+      // ignore
+    }
+  }
+
   const percent = totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100);
 
   return (
@@ -130,15 +152,27 @@ export default function MilestoneNode(props) {
       >
         <div className="flex flex-col gap-2">
           <div className="flex place-content-center justify-center gap-2">
-            <input type="text" placeholder="Milestone title" className="input input-lg input-ghost" />
+            <input
+              type="text"
+              placeholder="Milestone title"
+              className="input input-lg input-ghost"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              onBlur={(e) => persistTitle(e.target.value)}
+            />
             <Goal className="w-10 m-auto" />
           </div>
 
           <div className="relative w-full">
             <progress className="progress progress-secondary w-full h-6" value={percent} max="100"></progress>
-            <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", pointerEvents: "none" }}>
-              <span className="text-sm font-medium">{`${completedTasks}/${totalTasks}`}</span>
+            <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", pointerEvents: "none", bottom: "5px" }}>
+              <span className="text-sm font-medium flex align-center">{`${completedTasks}/${totalTasks}`}</span>
             </div>
+          </div>
+
+          <div className="flex">
+            <label htmlFor={`${id}-date-picker`}>Deadline:</label>
+            <input type="date" name={`${id}-date-picker`} id={id} className="ml-2" />
           </div>
 
           <textarea className="textarea w-full" placeholder="Description"></textarea>

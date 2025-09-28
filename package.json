@@ -17,6 +17,7 @@
     "motion": "^12.23.22",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "react-keybinds": "^1.0.8",
     "tailwindcss": "^4.1.13",
     "theme-change": "^2.5.0"
   },

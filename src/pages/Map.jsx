@@ -205,7 +205,69 @@ export default function App({ setPageIndex }) {
         <Panel position="bottom-right">
           <NewNodeButton nodes={nodes} setNodes={setNodes} />
         </Panel>
+        <Panel position="top" className="w-full flex justify-center">
+          <div className="overflow-x-auto">
+            {/* Dynamic milestone steps: each Milestone node becomes an li */}
+            <ul className="steps steps-vertical sm:steps-horizontal scale-75">
+              {(() => {
+                // compute adjacency maps
+                const incoming = new Map();
+                const outgoing = new Map();
+                for (const e of edges) {
+                  const ins = incoming.get(e.target) || [];
+                  ins.push(e.source);
+                  incoming.set(e.target, ins);
+                  const outs = outgoing.get(e.source) || [];
+                  outs.push(e.target);
+                  outgoing.set(e.source, outs);
+                }
+
+                function getUpstreamTaskNodeIds(startId) {
+                  const visited = new Set();
+                  const taskNodeIds = new Set();
+                  const stack = [startId];
+                  while (stack.length) {
+                    const nodeId = stack.pop();
+                    if (visited.has(nodeId)) continue;
+                    visited.add(nodeId);
+                    const neighbors = new Set([...(incoming.get(nodeId) || []), ...(outgoing.get(nodeId) || [])]);
+                    for (const nbrId of neighbors) {
+                      if (visited.has(nbrId)) continue;
+                      const nbrNode = nodes.find((n) => n.id === nbrId);
+                      if (!nbrNode) continue;
+                      if (nbrNode.type === "taskNode") taskNodeIds.add(nbrNode.id);
+                      if (nbrNode.type !== "startNode" && nbrNode.type !== "milestoneNode") {
+                        stack.push(nbrId);
+                      }
+                    }
+                  }
+                  return Array.from(taskNodeIds);
+                }
+
+                const milestoneNodes = nodes.filter((n) => n.type === "milestoneNode");
+                if (!milestoneNodes.length) return null;
+                return milestoneNodes.map((mNode, idx) => {
+                  const upstream = getUpstreamTaskNodeIds(mNode.id);
+                  const total = upstream.length;
+                  const completed = upstream.reduce((acc, nid) => {
+                    const node = nodes.find((n) => n.id === nid);
+                    return acc + (node && node.data && node.data.done ? 1 : 0);
+                  }, 0);
+                  const isComplete = total > 0 && completed === total;
+                  const title = (mNode.data && (mNode.data.title || mNode.data.name || mNode.data.label)) || `Milestone ${idx + 1}`;
+                  return (
+                    <li key={mNode.id} className={`step ${isComplete ? "step-primary" : ""}`}>
+                      {title}
+                    </li>
+                  );
+                });
+              })()}
+            </ul>
+          </div>
+        </Panel>
       </ReactFlow>
+
+
       {/* Confirmation modal: warn user they'll lose changes when navigating home */}
       {showConfirm && (
         <div className="modal modal-open">

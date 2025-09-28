@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
+import { KeyBindProvider } from "react-keybinds";
+
 import "./App.css";
 
 import Home from "./pages/Home";
@@ -8,6 +10,7 @@ import Settings from "./pages/Settings";
 import Toasts from "./components/Toasts";
 
 export default function App() {
+
   const pages = [Home, Board, Settings];
 
   const [pageIndex, setPageIndex] = useState(0);
@@ -24,7 +27,9 @@ export default function App() {
           exit={{ opacity: 0, x: -16 }}
           transition={{ duration: 0.22 }}
         >
-          <ActiveComponent setPageIndex={setPageIndex} />
+          <KeyBindProvider debounce={300}>
+            <ActiveComponent setPageIndex={setPageIndex} />
+          </KeyBindProvider>
         </motion.div>
       </AnimatePresence>
       <Toasts />

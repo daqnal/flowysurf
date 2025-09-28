@@ -123,7 +123,9 @@ export default function Settings({ setPageIndex }) {
         </div>
       </li>
 
-      <li className="list-row">
+      {/* Below sits the Keybinds settings, which is currently not functional */}
+
+      {/* <li className="list-row">
         <div className="w-full">
           <div className="font-medium mb-2">Keybinds</div>
 
@@ -162,9 +164,9 @@ export default function Settings({ setPageIndex }) {
             ))}
           </div>
         </div>
-      </li>
+      </li> */}
 
-      <li className="list-row">
+      {/* <li className="list-row">
         <div className="flex w-full justify-end gap-2">
           <button
             className="btn btn-sm btn-outline"
@@ -175,7 +177,7 @@ export default function Settings({ setPageIndex }) {
             Restore defaults
           </button>
         </div>
-      </li>
+      </li> */}
     </ul>
   );
 }

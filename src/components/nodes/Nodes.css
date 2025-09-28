@@ -2,3 +2,13 @@
 .textarea {
     background: none;
 }
+
+/* Remove default browser focus outline that appears outside the element for inputs inside nodes.
+   Use a subtle border color change on focus instead so it fits the node chrome. */
+.node-inner .input:focus,
+.node-inner .textarea:focus {
+    outline: none;
+    box-shadow: none;
+    /* rely on existing border; if using DaisyUI, change border color to primary */
+    border-color: var(--color-primary);
+}

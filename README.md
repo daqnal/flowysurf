@@ -67,4 +67,4 @@ Project structure (brief)
 
 ---
 
-Built in a 36-hour sprint for the [HackGT](https://hack.gt) hackathons.
+Built in a 36-hour sprint for the [HackGT](https://hack.gt) hackathon.

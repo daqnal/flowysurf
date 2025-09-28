@@ -19,7 +19,7 @@ export default function NewNodeButton({ nodes, setNodes }) {
       <div
         tabIndex={0}
         role="button"
-        className="btn btn-primary btn-sm btn-circle btn-soft"
+        className="btn btn-secondary btn-circle btn-soft"
       >
         <div className="tooltip tooltip-left" data-tip="Add node">
           <Plus />

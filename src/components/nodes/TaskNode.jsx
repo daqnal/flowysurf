@@ -20,12 +20,34 @@ export default function TaskNode(props) {
   const rf = useReactFlow();
   const [todos, setTodos] = useState(() => normalizeTodos(data.todos));
   const [done, setDone] = useState(() => !!data.done);
+  const [title, setTitle] = useState(() => (data && (data.title || "")));
+  const [description, setDescription] = useState(() => (data && (data.description || "")));
   const inputsRef = useRef([]);
 
   // sync when node data changes externally
   useEffect(() => {
     setTodos(normalizeTodos(data.todos));
+    setTitle((data && (data.title || "")));
+    setDescription((data && (data.description || "")));
   }, [data.todos]);
+
+  // persist title/description to node data
+  const persistMeta = useCallback(
+    (next) => {
+      try {
+        rf.setNodes((ns) => ns.map((n) => (n.id === id ? { ...n, data: { ...n.data, ...next } } : n)));
+        try {
+          const { emit } = require("../../lib/flowEvents");
+          emit({ nodes: rf.getNodes ? rf.getNodes() : [], edges: rf.getEdges ? rf.getEdges() : [] });
+        } catch (e) {
+          // ignore
+        }
+      } catch (e) {
+        // ignore
+      }
+    },
+    [id, rf]
+  );
 
   const persist = useCallback(
     (nextTodos) => {
@@ -95,6 +117,15 @@ export default function TaskNode(props) {
 
   // handle Enter to add new todo below current
   const onKeyDown = (e, index) => {
+    // Allow Escape to unfocus the input
+    if (e.key === "Escape") {
+      try {
+        e.currentTarget.blur();
+      } catch (err) { }
+      e.stopPropagation();
+      return;
+    }
+
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       addSubtask(index);
@@ -118,10 +149,43 @@ export default function TaskNode(props) {
               onChange={toggleMainDone}
               aria-label={"Toggle task"}
             />
-            <input type="text" placeholder="Task title" className="input input-lg input-ghost" />
+            <input
+              type="text"
+              placeholder="Task title"
+              className="input input-lg input-ghost"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              onBlur={(e) => persistMeta({ title: e.target.value })}
+              onKeyDown={(e) => {
+                if (e.key === "Escape") {
+                  try {
+                    e.currentTarget.blur();
+                  } catch (err) { }
+                  e.stopPropagation();
+                }
+              }}
+            />
           </div>
 
-          <textarea className="textarea w-full" placeholder="Description"></textarea>
+          <textarea
+            className="textarea w-full"
+            placeholder="Description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            onBlur={(e) => persistMeta({ description: e.target.value })}
+            onWheel={(e) => {
+              // prevent wheel from bubbling to the map (which may zoom/pan)
+              e.stopPropagation();
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") {
+                try {
+                  e.currentTarget.blur();
+                } catch (err) { }
+                e.stopPropagation();
+              }
+            }}
+          ></textarea>
 
           <div className="mt-2">
             {todos.length > 0 ? <div className="font-medium mb-1">Subtasks</div> : null}

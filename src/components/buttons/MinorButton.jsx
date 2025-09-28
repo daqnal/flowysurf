@@ -29,7 +29,7 @@ export default function MinorButton({
         whileTap={{ scale: 0.97 }}
         className={
           onBoard
-            ? "btn btn-primary btn-circle btn-soft btn-sm"
+            ? "btn btn-circle btn-soft btn-sm"
             : "btn btn-primary btn-circle btn-soft"
         }
         onClick={handleClick}

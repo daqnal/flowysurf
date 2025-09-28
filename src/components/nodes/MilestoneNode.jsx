@@ -26,6 +26,8 @@ export default function MilestoneNode(props) {
   const confettiRef = useMemo(() => ({ js: null }), []);
   const prevCompleteRef = useMemo(() => ({ wasComplete: false }), []);
   const [title, setTitle] = useState(() => (data && (data.title || data.name || data.label)) || "");
+  const [description, setDescription] = useState(() => (data && (data.description || "")));
+  const [deadline, setDeadline] = useState(() => (data && data.deadline) || "");
 
   // Helper to recursively find all upstream TaskNodes
   function getUpstreamTaskNodes(startId, nodes, edges) {
@@ -119,16 +121,32 @@ export default function MilestoneNode(props) {
     return () => unsub();
   }, [rf, id]);
 
-  // keep local title in sync if external data changes
+  // keep local title/description/deadline in sync if external data changes
   useEffect(() => {
     setTitle((data && (data.title || data.name || data.label)) || "");
-  }, [data && data.title, data && data.name, data && data.label]);
+    setDescription((data && (data.description || "")));
+    setDeadline((data && data.deadline) || "");
+  }, [data && data.title, data && data.name, data && data.label, data && data.description, data && data.deadline]);
 
   // persist title to the node's data and notify listeners
   function persistTitle(nextTitle) {
     setTitle(nextTitle);
     try {
       rf.setNodes((ns) => ns.map((n) => (n.id === id ? { ...n, data: { ...n.data, title: nextTitle } } : n)));
+    } catch (e) {
+      // ignore
+    }
+    try {
+      const { emit } = require("../../lib/flowEvents");
+      emit({ nodes: rf.getNodes ? rf.getNodes() : [], edges: rf.getEdges ? rf.getEdges() : [] });
+    } catch (e) {
+      // ignore
+    }
+  }
+
+  function persistMeta(next) {
+    try {
+      rf.setNodes((ns) => ns.map((n) => (n.id === id ? { ...n, data: { ...n.data, ...next } } : n)));
     } catch (e) {
       // ignore
     }
@@ -159,6 +177,14 @@ export default function MilestoneNode(props) {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               onBlur={(e) => persistTitle(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Escape") {
+                  try {
+                    e.currentTarget.blur();
+                  } catch (err) { }
+                  e.stopPropagation();
+                }
+              }}
             />
             <Goal className="w-10 m-auto" />
           </div>
@@ -172,10 +198,36 @@ export default function MilestoneNode(props) {
 
           <div className="flex">
             <label htmlFor={`${id}-date-picker`}>Deadline:</label>
-            <input type="date" name={`${id}-date-picker`} id={id} className="ml-2" />
+            <input
+              type="date"
+              name={`${id}-date-picker`}
+              id={`${id}-date-picker`}
+              className="ml-2"
+              value={deadline}
+              onChange={(e) => setDeadline(e.target.value)}
+              onBlur={(e) => persistMeta({ deadline: e.target.value })}
+            />
           </div>
 
-          <textarea className="textarea w-full" placeholder="Description"></textarea>
+          <textarea
+            className="textarea w-full"
+            placeholder="Description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            onBlur={(e) => persistMeta({ description: e.target.value })}
+            onWheel={(e) => {
+              // stop map from zooming/panning when scrolling inside textarea
+              e.stopPropagation();
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") {
+                try {
+                  e.currentTarget.blur();
+                } catch (err) { }
+                e.stopPropagation();
+              }
+            }}
+          ></textarea>
         </div>
 
         <motion.div

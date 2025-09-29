@@ -18,7 +18,7 @@ import MilestoneNode from "../components/nodes/MilestoneNode";
 import MinorButton from "../components/buttons/MinorButton";
 import { emit as emitFlowEvent } from "../lib/flowEvents";
 
-import { Info, House, Download, Upload } from "lucide-react";
+import { Info, House, Download, Upload, Plus } from "lucide-react";
 import NewNodeButton from "../components/buttons/NewNodeButton";
 import { pushToast } from "../components/Toasts";
 

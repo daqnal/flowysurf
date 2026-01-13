@@ -1,0 +1,151 @@
+{
+  "nodes": [
+    {
+      "id": "n1",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "type": "startNode",
+      "draggable": false,
+      "deletable": false,
+      "focusable": false,
+      "measured": {
+        "width": 78,
+        "height": 58
+      }
+    },
+    {
+      "id": "n2",
+      "position": {
+        "x": 197.58049727706435,
+        "y": -154.59382152883228
+      },
+      "type": "taskNode",
+      "measured": {
+        "width": 345,
+        "height": 315
+      },
+      "selected": false,
+      "dragging": false,
+      "data": {
+        "todos": [
+          {
+            "text": "Creat Github repo",
+            "done": true
+          },
+          {
+            "text": "Make Trello board",
+            "done": true
+          }
+        ],
+        "done": true,
+        "title": "Start project",
+        "description": "Let's get cookin"
+      }
+    },
+    {
+      "id": "n3",
+      "position": {
+        "x": 1067.8839850276886,
+        "y": -67.13643959685231
+      },
+      "type": "milestoneNode",
+      "measured": {
+        "width": 353,
+        "height": 236
+      },
+      "selected": false,
+      "dragging": false,
+      "data": {
+        "title": "Sprint 1"
+      }
+    },
+    {
+      "id": "n4",
+      "position": {
+        "x": 646.0122207188545,
+        "y": -163.36510218295038
+      },
+      "type": "taskNode",
+      "measured": {
+        "width": 345,
+        "height": 315
+      },
+      "selected": false,
+      "dragging": false,
+      "data": {
+        "todos": [
+          {
+            "text": "Cook up a website",
+            "done": true
+          },
+          {
+            "text": "Style it with some CSS",
+            "done": false
+          }
+        ],
+        "done": false,
+        "title": "Create website",
+        "description": "Build and design a beautiful website"
+      }
+    },
+    {
+      "id": "n5",
+      "position": {
+        "x": 465.10455722766767,
+        "y": 229.14970708883646
+      },
+      "type": "taskNode",
+      "measured": {
+        "width": 345,
+        "height": 315
+      },
+      "selected": false,
+      "dragging": false,
+      "data": {
+        "todos": [
+          {
+            "text": "Reponsibilities",
+            "done": true
+          },
+          {
+            "text": "Meetings",
+            "done": true
+          }
+        ],
+        "done": true,
+        "title": "Write report",
+        "description": "Gotta document the team project"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "n5",
+      "target": "n1",
+      "id": "xy-edge__n5-n1"
+    },
+    {
+      "source": "n2",
+      "target": "n1",
+      "id": "xy-edge__n2-n1"
+    },
+    {
+      "source": "n4",
+      "target": "n2",
+      "id": "xy-edge__n4-n2"
+    },
+    {
+      "source": "n3",
+      "target": "n4",
+      "id": "xy-edge__n3-n4"
+    },
+    {
+      "source": "n3",
+      "target": "n5",
+      "id": "xy-edge__n3-n5"
+    }
+  ],
+  "version": "1"
+}

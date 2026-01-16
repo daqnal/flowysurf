@@ -1,4 +1,4 @@
-import { prisma } from "../config/db";
+import { prisma } from "../config/db.js";
 
 const createChart = async (req, res) => {
   const { name, ownerId } = req.body;
@@ -25,9 +25,9 @@ const createChart = async (req, res) => {
   });
 };
 
-const updateChart = async (req, res) => {};
+const updateChart = async (req, res) => { };
 
-const importChart = async (req, res) => {};
+const importChart = async (req, res) => { };
 
 const deleteChart = async (req, res) => {
   const chart = await prisma.chart.findUnique({

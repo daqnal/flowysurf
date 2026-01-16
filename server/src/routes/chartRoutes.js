@@ -1,5 +1,5 @@
 import express from "express";
-import { createChart, deleteChart } from "../controllers/chartController";
+import { createChart, deleteChart } from "../controllers/chartController.js";
 
 const router = express.Router();
 

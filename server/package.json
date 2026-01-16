@@ -1,7 +1,7 @@
 {
   "name": "flowysurf",
   "version": "1.0.0",
-  "description": "",
+  "description": "Reimagine your project in a flowchart",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -10,16 +10,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/daqnal/flowymap.git"
+    "url": "git+https://git.dgd.sh/dan/flowysurf.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
   "bugs": {
-    "url": "https://github.com/daqnal/flowymap/issues"
+    "url": "https://git.dgd.sh/dan/flowysurf/issues"
   },
-  "homepage": "https://github.com/daqnal/flowymap#readme",
+  "homepage": "https://git.dgd.sh/dan/flowysurf",
   "dependencies": {
     "@prisma/client": "^6.19.1",
     "bcryptjs": "^3.0.3",

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 let pushFn = null;
 
-export function pushToast(message, type = "info", timeout = 3000) {
+export function pushToast(message, type = "info", timeout = 4000) {
   if (pushFn) pushFn({ id: Date.now(), message, type, timeout });
 }
 
@@ -31,9 +31,8 @@ export default function Toasts() {
       {toasts.map((t) => (
         <div
           key={t.id}
-          className={`alert shadow-lg ${
-            t.type === "error" ? "alert-error" : t.type === "success" ? "alert-success" : "alert-info"
-          }`}
+          className={`alert shadow-lg ${t.type === "error" ? "alert-error" : t.type === "success" ? "alert-success" : "alert-info"
+            }`}
         >
           <div>
             <span>{t.message}</span>

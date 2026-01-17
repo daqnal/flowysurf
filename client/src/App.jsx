@@ -1,24 +1,26 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { KeyBindProvider } from "react-keybinds";
+import { AuthProvider } from "./context/AuthContext";
 
 import "./App.css";
 
 import Home from "./pages/Home";
 import Board from "./pages/Map";
 import Settings from "./pages/Settings";
+import Drive from "./pages/Drive";
 import Toasts from "./components/Toasts";
 
 export default function App() {
 
-  const pages = [Home, Board, Settings];
+  const pages = [Home, Board, Settings, Drive];
 
   const [pageIndex, setPageIndex] = useState(0);
 
   const ActiveComponent = pages[pageIndex];
 
   return (
-    <>
+    <AuthProvider>
       <AnimatePresence mode="wait">
         <motion.div
           key={pageIndex}
@@ -33,6 +35,6 @@ export default function App() {
         </motion.div>
       </AnimatePresence>
       <Toasts />
-    </>
+    </AuthProvider>
   );
 }

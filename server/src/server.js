@@ -1,6 +1,7 @@
 import express from "express";
 import { config } from "dotenv";
 import { connectDB, disconnectDB } from "./config/db.js";
+import cookieParser from "cookie-parser";
 
 import chartRoutes from "./routes/chartRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
@@ -9,6 +10,8 @@ config();
 connectDB();
 
 const app = express();
+
+app.use(cookieParser());
 
 // Body parsing middlewares
 app.use(express.json());

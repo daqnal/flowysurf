@@ -88,4 +88,23 @@ const logout = async (req, res) => {
   });
 };
 
-export { register, login, logout };
+const getContext = async (req, res) => {
+  const id = req.user ? req.user.id : "";
+  const user = await prisma.user.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      email: true,
+      username: true
+    }
+  });
+
+  if (!user) {
+    return res.status(404).json({
+      message: "User not found: " + user
+    })
+  }
+  res.status(200).json(user);
+}
+
+export { register, login, logout, getContext };

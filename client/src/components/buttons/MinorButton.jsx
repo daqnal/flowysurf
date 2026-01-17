@@ -8,6 +8,7 @@ export default function MinorButton({
   onBoard,
   tooltipText,
   onClick,
+  soft
 }) {
   // Compose an onClick handler with clear precedence:
   // 1. explicit onClick prop
@@ -27,11 +28,7 @@ export default function MinorButton({
       <motion.button
         whileHover={{ scale: 1.03 }}
         whileTap={{ scale: 0.97 }}
-        className={
-          onBoard
-            ? "btn btn-circle btn-soft btn-sm"
-            : "btn btn-primary btn-circle btn-soft"
-        }
+        className={`btn btn-circle ${soft && "btn-soft"} ${onBoard ? "btn-sm" : "btn-primary"}`}
         onClick={handleClick}
         type="button"
       >

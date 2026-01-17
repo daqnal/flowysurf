@@ -1,23 +1,40 @@
 import axios from "axios";
 
 import { X } from "lucide-react";
+import { pushToast } from "./Toasts";
+import { useAuth } from "../context/AuthContext";
 
 export default function AuthModal({ type, setShowAuthModal }) {
     const action = type === "login" ? "Login" : "Register";
+
+    const { login, register, loading } = useAuth();
 
     const handeLogin = async (formData) => {
         const email = formData.get("email");
         const password = formData.get("password");
         try {
             console.log("Logging in...");
-            await axios.post("/auth/login",
-                { email, password },
-                { withCredentials: true }
-            );
+            await login(email, password);
             console.log("Login success!");
+            pushToast(`Logged in as ${email} successfully`, "success");
             setShowAuthModal(false);
         } catch (err) {
-            console.error("Login failed", err.response.data.message);
+            console.error("Login failed", err);
+        }
+    }
+
+    const handleRegistration = async (formData) => {
+        const username = formData.get("username");
+        const email = formData.get("email");
+        const password = formData.get("password");
+        try {
+            console.log("Registering...");
+            await register(username, email, password);
+            console.log("Registration success!");
+            pushToast(`Registered as ${username} successfully`, "success");
+            setShowAuthModal(false);
+        } catch (err) {
+            console.error("Registration failed: ", err);
         }
     }
 
@@ -32,20 +49,29 @@ export default function AuthModal({ type, setShowAuthModal }) {
 
                 <h1 className="text-3xl font-bold">{action}</h1>
 
-                <form action={handeLogin} className="fieldset w-full p-4">
+                <form action={type === "login" ? handeLogin : handleRegistration} className="fieldset w-full p-4">
+                    {type === "register" && (
+                        <fieldset className="fieldset w-full">
+                            <label className="label">Username</label>
+                            <input name="username" className="input validator w-full" placeholder="Username" required />
+                            <p className="validator-hint hidden">Required</p>
+                        </fieldset>
+                    )}
+
                     <fieldset className="fieldset w-full">
                         <label className="label">Email</label>
                         <input type="email" name="email" className="input validator w-full" placeholder="Email" required />
-                        <p className="validator-hint hidden">Required</p>
+                        <p className="validator-hint hidden mt-0">Required</p>
                     </fieldset>
 
                     <label className="fieldset w-full">
                         <span className="label">Password</span>
                         <input type="password" name="password" className="input validator w-full" placeholder="Password" required />
-                        <span className="validator-hint hidden">Required</span>
+                        <span className="validator-hint hidden mt-0">Required</span>
                     </label>
 
-                    <button className="btn btn-neutral mt-4" type="submit">{action}</button>
+
+                    {loading ? (<div className="skeleton btn mt-4" disabled></div>) : (<button className="btn btn-neutral mt-4" type="submit">Submit</button>)}
                 </form>
             </div>
         </div>

@@ -82,136 +82,52 @@ export default function Settings({ setPageIndex }) {
       // ignore
     }
   }, [keybinds]);
-
-  function goHome() {
-    if (typeof setPageIndex === "function") {
-      setPageIndex(0);
-      return;
-    }
-    // fallback
-    history.back();
-  }
-
-  function updateKeybind(action, index, value) {
-    setKeybinds((prev) => {
-      const next = { ...prev };
-      next[action] = Array.isArray(next[action]) ? [...next[action]] : [];
-      next[action][index] = value;
-      return next;
-    });
-  }
-
-  function addKeybind(action) {
-    setKeybinds((prev) => ({ ...prev, [action]: [...(prev[action] || []), ""] }));
-  }
-
-  function removeKeybind(action, index) {
-    setKeybinds((prev) => {
-      const next = { ...prev };
-      next[action] = (next[action] || []).filter((_, i) => i !== index);
-      return next;
-    });
-  }
-
   return (
-    <ul className="list bg-base-300 rounded-box shadow-md m-12">
-      <li className="list-row flex w-full items-center justify-between">
-        <div className="font-bold text-lg">Settings</div>
-        <div className="tooltip tooltip-left" data-tip="Return Home">
-          <button className="btn btn-soft btn-primary btn-sm btn-circle" onClick={goHome}>
-            <Home className="w-5" />
-          </button>
-        </div>
-      </li>
-
-      <li className="list-row flex w-full items-center justify-between">
-        <div className="font-medium">Theme</div>
-        <div className="join">
-          {(() => {
-            // determine current theme (data-theme or saved or prefers)
-            let current = "";
-            try {
-              current = document.documentElement.getAttribute("data-theme") || localStorage.getItem("flowymap-theme") || (prefersDark ? "night" : "emerald");
-            } catch (e) {
-              current = prefersDark ? "night" : "emerald";
-            }
-            const themes = [
-              { label: "Emerald", value: "emerald", data: "emerald" },
-              { label: "Night", value: "night", data: "night" },
-              { label: "Nord", value: "nord", data: "nord" },
-              { label: "Dracula", value: "dracula", data: "dracula" },
-            ];
-            return themes.map((t, i) => (
-              <input
-                key={i}
-                type="radio"
-                name="theme-buttons"
-                className="btn theme-controller join-item"
-                aria-label={t.label}
-                value={t.value}
-                data-set-theme={t.data}
-                defaultChecked={t.data === current}
-              />
-            ));
-          })()}
-        </div>
-      </li>
-
-      {/* Below sits the Keybinds settings, which is currently not functional */}
-
-      {/* <li className="list-row">
-        <div className="w-full">
-          <div className="font-medium mb-2">Keybinds</div>
-
-          <div className="grid gap-2">
-            {Object.entries(keybinds).map(([action, keys]) => (
-              <div key={action} className="card bg-base-100 p-3 shadow-sm">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="">{KEYBIND_NAMES[action]}</div>
-                </div>
-
-                <div className="flex flex-col gap-2">
-                  {(keys || []).map((k, i) => (
-                    <div key={i} className="flex gap-2 items-center">
-                      <input
-                        className="input input-sm w-full"
-                        value={k}
-                        onChange={(e) => updateKeybind(action, i, e.target.value)}
-                        aria-label={`${action} key ${i}`}
-                      />
-                      <button
-                        className="btn btn-xs btn-circle btn-error"
-                        onClick={() => removeKeybind(action, i)}>
-                        <X />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-                <div>
-                  <button
-                    className="btn btn-xs btn-outline mt-2"
-                    onClick={() => addKeybind(action)}>
-                    + Add
-                  </button>
-                </div>
-              </div>
-            ))}
+    <div className="w-full h-full flex justify-center">
+      <ul className="list bg-base-300 rounded-box shadow-md m-12 flex-grow lg:max-w-1/2">
+        <li className="list-row flex w-full items-center justify-between">
+          <div className="font-bold text-lg">Settings</div>
+          <div className="tooltip tooltip-left" data-tip="Return Home">
+            <button className="btn btn-soft btn-primary btn-sm btn-circle" onClick={() => setPageIndex(0)}>
+              <Home className="w-5" />
+            </button>
           </div>
-        </div>
-      </li> */}
+        </li>
 
-      {/* <li className="list-row">
-        <div className="flex w-full justify-end gap-2">
-          <button
-            className="btn btn-sm btn-outline"
-            onClick={() => {
-              // restore defaults
-              setKeybinds(DEFAULT_KEYBINDS);
-            }}>
-            Restore defaults
-          </button>
-        </div>
-      </li> */}
-    </ul>
+        <li className="list-row flex w-full items-center justify-between">
+          <div className="font-medium">Theme</div>
+          <div className="join">
+            {(() => {
+              // determine current theme (data-theme or saved or prefers)
+              let current = "";
+              try {
+                current = document.documentElement.getAttribute("data-theme") || localStorage.getItem("flowymap-theme") || (prefersDark ? "night" : "emerald");
+              } catch (e) {
+                current = prefersDark ? "night" : "emerald";
+              }
+              const themes = [
+                { label: "Emerald", value: "emerald", data: "emerald" },
+                { label: "Night", value: "night", data: "night" },
+                { label: "Nord", value: "nord", data: "nord" },
+                { label: "Dracula", value: "dracula", data: "dracula" },
+              ];
+              return themes.map((t, i) => (
+                <input
+                  key={i}
+                  type="radio"
+                  name="theme-buttons"
+                  className="btn theme-controller join-item"
+                  aria-label={t.label}
+                  value={t.value}
+                  data-set-theme={t.data}
+                  defaultChecked={t.data === current}
+                />
+              ));
+            })()}
+          </div>
+        </li>
+      </ul>
+    </div>
+
   );
 }

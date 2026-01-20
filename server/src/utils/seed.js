@@ -4,6 +4,9 @@ const prisma = new PrismaClient();
 
 const creatorId = process.env.CREATOR_USER_ID;
 
+import * as exampleData from "./example.json" with {type: "json"};
+// const exampleData = require("./example.json");
+
 // MAY NOT WORK
 // Must match the Prisma schema
 
@@ -12,16 +15,19 @@ const charts = [
     name: "2110 Project",
     description: "idk lol",
     ownerId: creatorId,
+    data: exampleData
   },
   {
     name: "2050 Project",
     description: "math",
     ownerId: creatorId,
+    data: exampleData
   },
   {
     name: "binga bunga",
     description: "gunga",
     ownerId: creatorId,
+    data: exampleData
   },
 ];
 

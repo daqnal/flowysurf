@@ -10,7 +10,7 @@ export function AuthProvider({ children }) {
     useEffect(() => {
         const checkAuth = async () => {
             try {
-                const res = await axios.get('/auth/me', { withCredentials: true });
+                const res = await axios.get('/api/auth/me', { withCredentials: true });
                 setUser(res.data);
             } catch (err) {
                 setUser(null);
@@ -24,12 +24,12 @@ export function AuthProvider({ children }) {
     const login = async (email, password) => {
         setTimeout(() => { }, 2000);
         await axios.post(
-            "/auth/login",
+            "/api/auth/login",
             { email, password },
             { withCredentials: true }
         )
         const res = await axios.get(
-            "/auth/me",
+            "/api/auth/me",
             { withCredentials: true }
         )
         setUser(res.data);
@@ -37,12 +37,12 @@ export function AuthProvider({ children }) {
 
     const register = async (username, email, password) => {
         await axios.post(
-            "/auth/register",
+            "/api/auth/register",
             { username, email, password },
             { withCredentials: true }
         )
         const res = await axios.get(
-            "/auth/me",
+            "/api/auth/me",
             { withCredentials: true }
         )
         setUser(res.data);
@@ -50,7 +50,7 @@ export function AuthProvider({ children }) {
 
     const logout = async () => {
         await axios.post(
-            "/auth/logout",
+            "/api/auth/logout",
             {},
             { withCredentials: true }
         );
@@ -58,7 +58,7 @@ export function AuthProvider({ children }) {
     };
 
     return (
-        <AuthContext.Provider value={{ user, loading, login, logout }}>
+        <AuthContext.Provider value={{ user, loading, login, register, logout }}>
             {children}
         </AuthContext.Provider>
     );

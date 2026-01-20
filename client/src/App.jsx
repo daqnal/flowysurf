@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { KeyBindProvider } from "react-keybinds";
-import { AuthProvider } from "./context/AuthContext";
-
 import "./App.css";
 
 import Home from "./pages/Home";
@@ -15,14 +13,15 @@ export default function App() {
 
   const pages = [Home, Board, Settings, Drive];
 
-  const [pageIndex, setPageIndex] = useState(0);
+  const [pageIndex, setPageIndex] = useState(3);
 
   const ActiveComponent = pages[pageIndex];
 
   return (
-    <AuthProvider>
+    <>
       <AnimatePresence mode="wait">
         <motion.div
+          className="h-full"
           key={pageIndex}
           initial={{ opacity: 0, x: 16 }}
           animate={{ opacity: 1, x: 0 }}
@@ -35,6 +34,6 @@ export default function App() {
         </motion.div>
       </AnimatePresence>
       <Toasts />
-    </AuthProvider>
+    </>
   );
 }

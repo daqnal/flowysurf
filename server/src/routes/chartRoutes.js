@@ -1,9 +1,11 @@
 import express from "express";
-import { createChart, deleteChart } from "../controllers/chartController.js";
+import { createChart, deleteChart, getCharts } from "../controllers/chartController.js";
+import { authMiddleware } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/create", createChart);
+router.get("/", authMiddleware, getCharts)
+router.post("/", authMiddleware, createChart);
 router.delete("/:id", deleteChart);
 
 export default router;

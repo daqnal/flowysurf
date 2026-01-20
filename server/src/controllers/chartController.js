@@ -1,16 +1,18 @@
 import { prisma } from "../config/db.js";
 
+const getCharts = async (req, res) => {
+  const charts = await prisma.chart.findMany({
+    where: { ownerId: req.user.id }
+  })
+  res.json(charts);
+}
+
 const createChart = async (req, res) => {
   const { name, ownerId } = req.body;
 
   if (!name) {
     // TODO: Update name depending on how many unnamed charts there are
     name = "Unnamed Chart";
-  }
-
-  if (!ownerId) {
-    // In future, add more extensive checks to make sure user is correct
-    return res.status(400).json({ error: "Owner ID not provided" });
   }
 
   const chart = prisma.chart.create({
@@ -23,6 +25,8 @@ const createChart = async (req, res) => {
       }),
     },
   });
+
+  res.status(201).json(chart);
 };
 
 const updateChart = async (req, res) => { };
@@ -46,4 +50,4 @@ const deleteChart = async (req, res) => {
   await prisma.chart.deleteChart(chart);
 };
 
-export { createChart, updateChart, importChart, deleteChart };
+export { getCharts, createChart, updateChart, importChart, deleteChart };

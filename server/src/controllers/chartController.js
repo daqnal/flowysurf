@@ -2,9 +2,23 @@ import { prisma } from "../config/db.js";
 
 const getCharts = async (req, res) => {
   const charts = await prisma.chart.findMany({
-    where: { ownerId: req.user.id }
+    where: { ownerId: req.user.id },
+    omit: { data: true }
   })
   res.json(charts);
+}
+
+const getChartData = async (req, res) => {
+  const chart = await prisma.chart.findUnique({
+    where: { id: req.params.id },
+  });
+
+  // Ensure only owner can access
+  if (chart.ownerId !== req.user.id) {
+    return res.status(403).json({ error: "Not allowed to access this chart" });
+  }
+
+  res.json(chart);
 }
 
 const createChart = async (req, res) => {
@@ -50,4 +64,4 @@ const deleteChart = async (req, res) => {
   await prisma.chart.deleteChart(chart);
 };
 
-export { getCharts, createChart, updateChart, importChart, deleteChart };
+export { getCharts, getChartData, createChart, updateChart, importChart, deleteChart };

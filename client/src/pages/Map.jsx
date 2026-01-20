@@ -209,27 +209,7 @@ export default function App({ setPageIndex }) {
             icon={Upload}
             onBoard={true}
             tooltipText={"Load"}
-            onClick={() => {
-              const input = document.createElement("input");
-              input.type = "file";
-              input.accept = ".flowy,application/json";
-              input.onchange = async (e) => {
-                const file = e.target.files && e.target.files[0];
-                if (!file) return;
-                try {
-                  const text = await file.text();
-                  const parsed = JSON.parse(text);
-                  if (parsed.nodes) setNodes(parsed.nodes);
-                  if (parsed.edges) setEdges(parsed.edges);
-                  localStorage.setItem("flowymap-v1", JSON.stringify(parsed));
-                  pushToast(`Loaded ${file.name}`, "success");
-                } catch (err) {
-                  console.error(err);
-                  pushToast("Failed to load .flowy file", "error");
-                }
-              };
-              input.click();
-            }}
+            onClick={() => loadChartLocal}
           />
           <MinorButton icon={Info} onBoard={true} tooltipText={"Help"} onClick={() => setShowHelp(true)} />
         </Panel>
@@ -357,4 +337,38 @@ export default function App({ setPageIndex }) {
       )}
     </div>
   );
+}
+
+
+function loadChartLocal() {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = ".flowy,application/json";
+  input.onchange = async (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    try {
+      const text = await file.text();
+      const parsed = JSON.parse(text);
+      if (parsed.nodes) setNodes(parsed.nodes);
+      if (parsed.edges) setEdges(parsed.edges);
+      localStorage.setItem("flowymap-v1", JSON.stringify(parsed));
+      pushToast(`Loaded ${file.name}`, "success");
+    } catch (err) {
+      console.error(err);
+      pushToast("Failed to load .flowy file", "error");
+    }
+  };
+  input.click();
+}
+
+export function loadChartServer(chart) {
+  if (chart.nodes) {
+    setNodes(chart.nodes);
+  }
+  if (chart.edges) {
+    setEdges(chart.edges);
+  }
+  localStorage.setItem("flowymap-v1", JSON.stringify(chart));
+  pushToast(`Loaded ${chart.name}`, "success");
 }

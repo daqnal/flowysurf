@@ -27,7 +27,7 @@ export default function NewNodeButton({ nodes, setNodes }) {
       </div>
 
       <div className="fab-close">
-        <span className="btn btn-circle btn-sm btn-error">
+        <span className="btn btn-circle btn-error">
           <X />
         </span>
       </div>

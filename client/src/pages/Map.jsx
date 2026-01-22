@@ -18,9 +18,10 @@ import MilestoneNode from "../components/nodes/MilestoneNode";
 import MinorButton from "../components/buttons/MinorButton";
 import { emit as emitFlowEvent } from "../lib/flowEvents";
 
-import { Info, House, Download, Upload, Plus } from "lucide-react";
+import { Info, House, Download, Upload, Plus, HardDrive } from "lucide-react";
 import NewNodeButton from "../components/buttons/NewNodeButton";
 import { pushToast } from "../components/Toasts";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const initialNodes = [
   {
@@ -46,6 +47,8 @@ export default function App({ setPageIndex }) {
   const [edges, setEdges] = useState(initialEdges);
   const [showConfirm, setShowConfirm] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
+
+  const { user } = useAuth();
 
   const autosaveTimer = useRef(null);
 
@@ -169,7 +172,6 @@ export default function App({ setPageIndex }) {
         fitView
         fitViewOptions={{ padding: 1, maxZoom: 1.5, minZoom: 0.2 }}
       >
-        {/* per-document wheel capture listener added in useEffect to prevent map zoom while editing inputs */}
         <Background variant={BackgroundVariant.Dots} />
         <Panel position="bottom-left" className="flex gap-2">
           <MinorButton
@@ -178,6 +180,16 @@ export default function App({ setPageIndex }) {
             tooltipText={"Home"}
             onClick={() => setShowConfirm(true)}
           />
+
+          {user && (
+            <MinorButton
+              icon={HardDrive}
+              onBoard={true}
+              tooltipText={"Drive"}
+              onClick={() => setPageIndex(3)}
+            />
+          )}
+
           <MinorButton
             icon={Download}
             onBoard={true}
@@ -362,13 +374,17 @@ function loadChartLocal() {
   input.click();
 }
 
+// NOT WORKING
 export function loadChartServer(chart) {
-  if (chart.nodes) {
-    setNodes(chart.nodes);
+  const data = chart.data?.default;
+  if (data?.nodes) {
+    console.log("Applying nodes");
+    setNodes(data.nodes);
   }
-  if (chart.edges) {
-    setEdges(chart.edges);
+  if (data?.edges) {
+    console.log("Applying edges");
+    setEdges(data.edges);
   }
-  localStorage.setItem("flowymap-v1", JSON.stringify(chart));
-  pushToast(`Loaded ${chart.name}`, "success");
+  localStorage.setItem("flowymap-v1", JSON.stringify({ nodes: data.nodes, edges: data.edges, version: "1" }));
+  pushToast(`Loaded ${chart.name || "chart"}`, "success");
 }

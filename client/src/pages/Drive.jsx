@@ -1,7 +1,7 @@
 import { useCharts } from "../context/ChartsContext";
 
-import { Home, Map, Plus } from "lucide-react"
-import { loadChartServer } from "./Map";
+import { Home, Map, Plus } from "lucide-react";
+import { loadChartServer } from "./Map.jsx";
 
 export default function Drive({ setPageIndex }) {
     const { charts, chart, fetchChart } = useCharts();

@@ -1,7 +1,6 @@
 import { useCharts } from "../context/ChartsContext";
 
 import { Home, Map, Plus } from "lucide-react";
-import { loadChartServer } from "./Map.jsx";
 
 export default function Drive({ setPageIndex }) {
     const { charts, chart, fetchChart } = useCharts();
@@ -9,7 +8,8 @@ export default function Drive({ setPageIndex }) {
     const handleChartClick = (id) => {
         fetchChart(id);
         setPageIndex(1);
-        loadChartServer(chart);
+        // loadChartServer(chart);
+        console.log("Load chart from Drive");
     }
 
 

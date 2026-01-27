@@ -10,11 +10,10 @@
 
 .react-flow__node {
   color: var(--color-base-content);
-  background: var(--color-base-200);
+  background-color: var(--color-base-200);
   border-radius: var(--radius-box);
-  border-width: var(--border);
   padding: 6px;
-  border: 1px solid var(--color-base-content);
+  border: 0.15em solid var(--color-base-content);
 
   /* smooth border-color transitions and opacity changes for animations */
   transition: border-color 160ms ease, opacity 220ms ease;
@@ -22,13 +21,12 @@
 
 .react-flow__node:hover {
   border-color: var(--color-primary);
+  /* background-color: var(--color-base-content); */
+  /* color: var(--color-base-200); */
 }
 
-.react-flow__node:active {
-  /* subtle pressed state handled by node inner content scaling */
-}
+.react-flow__node:active {}
 
-/* helper class used when animating removal (can be toggled by code) */
 .react-flow__node.removing {
   opacity: 0;
   transform: scale(0.95);
@@ -45,6 +43,4 @@
   height: 15px;
 }
 
-.react-flow__edge-path {
-  stroke: var(--color-base-content);
-}
+.react-flow__edge-path {}

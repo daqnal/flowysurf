@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
 import { AuthProvider } from './context/AuthContext.jsx';
 import { ChartsProvider } from './context/ChartsContext.jsx';
+import { FlowProvider } from './context/FlowContext.jsx';
 
 // Apply saved theme before mounting React so theme-dependent UI renders correctly on first paint
 try {
@@ -19,7 +20,9 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AuthProvider>
       <ChartsProvider>
-        <App />
+        <FlowProvider>
+          <App />
+        </FlowProvider>
       </ChartsProvider>
     </AuthProvider>
   </StrictMode>,

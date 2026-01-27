@@ -13,7 +13,7 @@ export default function App() {
 
   const pages = [Home, Board, Settings, Drive];
 
-  const [pageIndex, setPageIndex] = useState(3);
+  const [pageIndex, setPageIndex] = useState(1);
 
   const ActiveComponent = pages[pageIndex];
 

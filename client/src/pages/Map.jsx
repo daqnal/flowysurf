@@ -1,9 +1,6 @@
 import { useState } from "react";
 import {
   ReactFlow,
-  applyNodeChanges,
-  applyEdgeChanges,
-  addEdge,
   Panel,
   Background,
   BackgroundVariant,
@@ -16,9 +13,11 @@ import StartNode from "../components/nodes/StartNode";
 import TaskNode from "../components/nodes/TaskNode";
 import MilestoneNode from "../components/nodes/MilestoneNode";
 import MinorButton from "../components/buttons/MinorButton";
-import { Info, House, Download, Upload, Plus, HardDrive } from "lucide-react";
+import { Info, House, Download, Upload, HardDrive } from "lucide-react";
 import NewNodeButton from "../components/buttons/NewNodeButton";
 import { pushToast } from "../components/Toasts";
+import HelpModal from "../components/modals/HelpModal.jsx";
+import ExitConfirmModal from "../components/modals/ExitConfirmModal.jsx";
 
 
 import { useAuth } from "../context/AuthContext.jsx";
@@ -102,55 +101,9 @@ export default function App({ setPageIndex }) {
         </Panel>
       </ReactFlow>
 
-      {showHelp && (
-        <div className="modal modal-open">
-          <div className="modal-box">
-            <h3 className="font-bold text-lg">Help</h3>
-            <div className="py-2 flex flex-col gap-2">
-              <p>Welcome to flowysurf! Here is a quick guide to get you started.</p>
+      {showHelp && (<HelpModal setShowHelp={setShowHelp} />)}
 
-              <p>The flowchart that you see is called the <i>Map</i>, and it displays <i>Nodes</i>. There are two different kinds of nodes: <i>Tasks</i> and <i>Milestones</i>.
-              </p>
-
-              <p>Tasks represent individual work items that can have subtasks. You can add subtasks by pressing Enter while editing a task, and mark them complete with the checkbox. When everything is done, you can mark the whole node as complete.</p>
-
-              <p>Milestones represent key project goals and automatically track the completion of all upstream Tasks. As you complete Tasks, the corresponding Milestones will update to reflect your progress.</p>
-
-              <p>To add a new node, click the <button className="btn btn-xs btn-circle btn-secondary btn-soft"><Plus className="w-4" /></button> in the bottom-right corner. You can drag nodes around to organize your map, and connect them by dragging from one node's handle to another's.</p>
-
-              <p>To save your work, download the file to your computer using the <button className="btn btn-xs btn-circle btn-secondary btn-soft"><Download className="w-4" /></button> button. You can later reload it using the <button className="btn btn-xs btn-circle btn-secondary btn-soft"><Upload className="w-4" /></button> button. Your work is also automatically saved in your browser's local storage.</p>
-            </div>
-            <div className="modal-action">
-              <button className="btn" onClick={() => setShowHelp(false)}>
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {showConfirm && (
-        <div className="modal modal-open">
-          <div className="modal-box">
-            <h3 className="font-bold text-lg">Leave map?</h3>
-            <p className="py-4">If you go home now you will lose unsaved changes. Continue?</p>
-            <div className="modal-action">
-              <button className="btn" onClick={() => setShowConfirm(false)}>
-                Cancel
-              </button>
-              <button
-                className="btn btn-error"
-                onClick={() => {
-                  setShowConfirm(false);
-                  setPageIndex(0);
-                }}
-              >
-                Leave
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {showConfirm && <ExitConfirmModal setShowConfirm={setShowConfirm} setPageIndex={setPageIndex} />}
     </div>
   );
 }

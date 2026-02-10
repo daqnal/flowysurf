@@ -16,121 +16,121 @@ function normalizeTodos(raw) {
 }
 
 export default function TaskNode(props) {
-  const { id, data = {} } = props;
-  const rf = useReactFlow();
-  const [todos, setTodos] = useState(() => normalizeTodos(data.todos));
-  const [done, setDone] = useState(() => !!data.done);
-  const [title, setTitle] = useState(() => (data && (data.title || "")));
-  const [description, setDescription] = useState(() => (data && (data.description || "")));
-  const inputsRef = useRef([]);
+  // const { id, data = {} } = props;
+  // const rf = useReactFlow();
+  // const [todos, setTodos] = useState(() => normalizeTodos(data.todos));
+  // const [done, setDone] = useState(() => !!data.done);
+  // const [title, setTitle] = useState(() => (data && (data.title || "")));
+  // const [description, setDescription] = useState(() => (data && (data.description || "")));
+  // const inputsRef = useRef([]);
 
-  // sync when node data changes externally
-  useEffect(() => {
-    setTodos(normalizeTodos(data.todos));
-    setTitle((data && (data.title || "")));
-    setDescription((data && (data.description || "")));
-  }, [data.todos]);
+  // // sync when node data changes externally
+  // useEffect(() => {
+  //   setTodos(normalizeTodos(data.todos));
+  //   setTitle((data && (data.title || "")));
+  //   setDescription((data && (data.description || "")));
+  // }, [data.todos]);
 
-  // persist title/description to node data
-  const persistMeta = useCallback(
-    (next) => {
-      try {
-        rf.setNodes((ns) => ns.map((n) => (n.id === id ? { ...n, data: { ...n.data, ...next } } : n)));
-        try {
-          const { emit } = require("../../lib/flowEvents");
-          emit({ nodes: rf.getNodes ? rf.getNodes() : [], edges: rf.getEdges ? rf.getEdges() : [] });
-        } catch (e) {
-          // ignore
-        }
-      } catch (e) {
-        // ignore
-      }
-    },
-    [id, rf]
-  );
+  // // persist title/description to node data
+  // const persistMeta = useCallback(
+  //   (next) => {
+  //     try {
+  //       rf.setNodes((ns) => ns.map((n) => (n.id === id ? { ...n, data: { ...n.data, ...next } } : n)));
+  //       try {
+  //         const { emit } = require("../../lib/flowEvents");
+  //         emit({ nodes: rf.getNodes ? rf.getNodes() : [], edges: rf.getEdges ? rf.getEdges() : [] });
+  //       } catch (e) {
+  //         // ignore
+  //       }
+  //     } catch (e) {
+  //       // ignore
+  //     }
+  //   },
+  //   [id, rf]
+  // );
 
-  const persist = useCallback(
-    (nextTodos) => {
-      setTodos(nextTodos);
-      try {
-        // persist only todos; do NOT automatically set top-level done from subtasks
-        rf.setNodes((ns) => ns.map((n) => (n.id === id ? { ...n, data: { ...n.data, todos: nextTodos } } : n)));
-        // notify external subscribers about the graph change
-        try {
-          const { emit } = require("../../lib/flowEvents");
-          const payload = { nodes: rf.getNodes ? rf.getNodes() : [], edges: rf.getEdges ? rf.getEdges() : [] };
-          emit(payload);
-        } catch (e) {
-          // ignore require errors outside of bundler
-        }
-      } catch (e) {
-        // ignore in non-browser/test
-      }
-    },
-    [id, rf]
-  );
+  // const persist = useCallback(
+  //   (nextTodos) => {
+  //     setTodos(nextTodos);
+  //     try {
+  //       // persist only todos; do NOT automatically set top-level done from subtasks
+  //       rf.setNodes((ns) => ns.map((n) => (n.id === id ? { ...n, data: { ...n.data, todos: nextTodos } } : n)));
+  //       // notify external subscribers about the graph change
+  //       try {
+  //         const { emit } = require("../../lib/flowEvents");
+  //         const payload = { nodes: rf.getNodes ? rf.getNodes() : [], edges: rf.getEdges ? rf.getEdges() : [] };
+  //         emit(payload);
+  //       } catch (e) {
+  //         // ignore require errors outside of bundler
+  //       }
+  //     } catch (e) {
+  //       // ignore in non-browser/test
+  //     }
+  //   },
+  //   [id, rf]
+  // );
 
-  const updateSubtask = (index, value) => {
-    const next = todos.map((t, i) => (i === index ? { ...t, text: value } : t));
-    persist(next);
-  };
+  // const updateSubtask = (index, value) => {
+  //   const next = todos.map((t, i) => (i === index ? { ...t, text: value } : t));
+  //   persist(next);
+  // };
 
-  const toggleDone = (index) => {
-    const next = todos.map((t, i) => (i === index ? { ...t, done: !t.done } : t));
-    persist(next);
-  };
+  // const toggleDone = (index) => {
+  //   const next = todos.map((t, i) => (i === index ? { ...t, done: !t.done } : t));
+  //   persist(next);
+  // };
 
-  // persist top-level done when main checkbox toggled
-  const toggleMainDone = () => {
-    const nextDone = !done;
-    setDone(nextDone);
-    try {
-      rf.setNodes((ns) => ns.map((n) => (n.id === id ? { ...n, data: { ...n.data, todos, done: nextDone } } : n)));
-      try {
-        const { emit } = require("../../lib/flowEvents");
-        const payload = { nodes: rf.getNodes ? rf.getNodes() : [], edges: rf.getEdges ? rf.getEdges() : [] };
-        emit(payload);
-      } catch (e) {
-        // ignore
-      }
-    } catch (e) {
-      // ignore
-    }
-  };
+  // // persist top-level done when main checkbox toggled
+  // const toggleMainDone = () => {
+  //   const nextDone = !done;
+  //   setDone(nextDone);
+  //   try {
+  //     rf.setNodes((ns) => ns.map((n) => (n.id === id ? { ...n, data: { ...n.data, todos, done: nextDone } } : n)));
+  //     try {
+  //       const { emit } = require("../../lib/flowEvents");
+  //       const payload = { nodes: rf.getNodes ? rf.getNodes() : [], edges: rf.getEdges ? rf.getEdges() : [] };
+  //       emit(payload);
+  //     } catch (e) {
+  //       // ignore
+  //     }
+  //   } catch (e) {
+  //     // ignore
+  //   }
+  // };
 
-  const addSubtask = (atIndex) => {
-    const next = [...todos];
-    const insertIndex = typeof atIndex === "number" ? atIndex + 1 : next.length;
-    next.splice(insertIndex, 0, { text: "", done: false });
-    persist(next);
-    // focus will be handled after render via ref
-    setTimeout(() => {
-      const ref = inputsRef.current[insertIndex];
-      if (ref) ref.focus();
-    }, 0);
-  };
+  // const addSubtask = (atIndex) => {
+  //   const next = [...todos];
+  //   const insertIndex = typeof atIndex === "number" ? atIndex + 1 : next.length;
+  //   next.splice(insertIndex, 0, { text: "", done: false });
+  //   persist(next);
+  //   // focus will be handled after render via ref
+  //   setTimeout(() => {
+  //     const ref = inputsRef.current[insertIndex];
+  //     if (ref) ref.focus();
+  //   }, 0);
+  // };
 
-  const removeSubtask = (index) => {
-    const next = todos.filter((_, i) => i !== index);
-    persist(next);
-  };
+  // const removeSubtask = (index) => {
+  //   const next = todos.filter((_, i) => i !== index);
+  //   persist(next);
+  // };
 
-  // handle Enter to add new todo below current
-  const onKeyDown = (e, index) => {
-    // Allow Escape to unfocus the input
-    if (e.key === "Escape") {
-      try {
-        e.currentTarget.blur();
-      } catch (err) { }
-      e.stopPropagation();
-      return;
-    }
+  // // handle Enter to add new todo below current
+  // const onKeyDown = (e, index) => {
+  //   // Allow Escape to unfocus the input
+  //   if (e.key === "Escape") {
+  //     try {
+  //       e.currentTarget.blur();
+  //     } catch (err) { }
+  //     e.stopPropagation();
+  //     return;
+  //   }
 
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      addSubtask(index);
-    }
-  };
+  //   if (e.key === "Enter" && !e.shiftKey) {
+  //     e.preventDefault();
+  //     addSubtask(index);
+  //   }
+  // };
 
   return (
     <>

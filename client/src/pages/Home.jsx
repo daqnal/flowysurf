@@ -1,10 +1,10 @@
 import { useState } from "react";
 
-import AuthModal from "../components/AuthModal";
+import AuthModal from "../components/modals/AuthModal.jsx";
 import MajorButton from "../components/buttons/MajorButton";
 import MinorButton from "../components/buttons/MinorButton";
 import { Plus, Settings } from "lucide-react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext.jsx";
 import { pushToast } from "../components/Toasts";
 
 export default function Home({ setPageIndex }) {

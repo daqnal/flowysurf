@@ -14,7 +14,7 @@ export default function StartNode() {
         style={{ zIndex: 1 }}
       >
         <b className="text-xl">Start</b>
-        {/* flash overlay */}
+
         <motion.div
           aria-hidden
           initial={{ opacity: 0.9 }}

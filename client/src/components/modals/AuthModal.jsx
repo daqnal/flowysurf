@@ -1,8 +1,8 @@
 import axios from "axios";
 
 import { X } from "lucide-react";
-import { pushToast } from "./Toasts";
-import { useAuth } from "../context/AuthContext";
+import { pushToast } from "../Toasts";
+import { useAuth } from "../../context/AuthContext";
 
 export default function AuthModal({ type, setShowAuthModal }) {
     const action = type === "login" ? "Login" : "Register";
